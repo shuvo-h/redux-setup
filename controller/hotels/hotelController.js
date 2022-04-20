@@ -51,11 +51,27 @@ async function getSingleHotels(req,res,next) {
     }
 }
 
+async function getOwnersHotels(req,res,next) {
+    console.log("called cont", req.body?.owner_email, "=== ",req?.decodedUser?.email);
+    // const hotelID = req.params.hotel_id;
+    if (req.body?.owner_email === req?.decodedUser?.email) {
+        try {
+            const hotels = await Hotels.find({owner_email:req?.decodedUser?.email});
+            res.status(200).json({hotels,success: true});
+        } catch (err) {
+            res.status(501).json({message:"Something went wrong",success: false})
+        }
+    }else{
+        res.status(501).json({message:"Something went wrong",success: false})
+    }
+}
+
 
 
 
 module.exports ={
     addNewHotel,
     getAllHotels,
-    getSingleHotels
+    getSingleHotels,
+    getOwnersHotels
 }

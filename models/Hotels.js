@@ -7,6 +7,11 @@ const hotelsSchema = mongoose.Schema(
             require: true,
             trim: true
         },
+        owner_email: {
+            type: String,
+            require: true,
+            trim: true
+        },
         hotelName: {
             type: String,
             require: true,
