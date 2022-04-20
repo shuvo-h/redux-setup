@@ -14,7 +14,7 @@ async function addNewUser(req,res,next) {
     // save user to DB or send error 
     try {
         const result = await newUser.save();
-        res.status(200).json({message:"User was added successfully!"})
+        res.status(200).json({message:"User was added successfully!",user_id:result._id})
     } catch (err) {
         if (newUser.avatar_id) {
             deleteImage(newUser.avatar_id);

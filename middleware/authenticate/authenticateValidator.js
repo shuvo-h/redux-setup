@@ -21,11 +21,9 @@ const addUserValidator = [
             try {
                 const user = await User.findOne({email:value});
                 if (user) {
-                    res.json({error:{message:"Email already exist!"}})
                     throw createError("Email already exist")
                 }
             } catch (err) {
-                res.json({error:{message:err.message}})
                 throw createError(err.message)
             }
         }),
