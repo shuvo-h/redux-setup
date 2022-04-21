@@ -52,7 +52,6 @@ async function getSingleHotels(req,res,next) {
 }
 
 async function getOwnersHotels(req,res,next) {
-    console.log("called cont", req.body?.owner_email, "=== ",req?.decodedUser?.email);
     // const hotelID = req.params.hotel_id;
     if (req.body?.owner_email === req?.decodedUser?.email) {
         try {
@@ -66,6 +65,48 @@ async function getOwnersHotels(req,res,next) {
     }
 }
 
+async function deleteSingleHotel(req,res,next) {
+    const hotelID = req.params.hotel_id;
+    if (req?.decodedUser?.email) {
+        try {
+            const hotel = await Hotels.findOne({hotel_id:hotelID});
+            if (hotel.owner_email == req?.decodedUser?.email) {
+                const result = await Hotels.deleteOne({hotel_id:hotelID});
+                res.status(200).json({result,success: true});
+            }else{
+                res.status(501).json({message:"You are not authorized",success: false})
+            }
+        } catch (err) {
+            res.status(501).json({message:"Something went wrong",success: false})
+        }
+    }else{
+        res.status(501).json({message:"You are not authorized",success: false})
+    }
+}
+
+async function updateAHotel(req,res,next) {
+    const hotelID = req.params.hotel_id;
+    if (req?.decodedUser?.email) {
+        try {
+            const hotel = await Hotels.findOne({hotel_id:hotelID});
+            if (hotel.owner_email == req?.decodedUser?.email) {
+                    const result = await Hotels.updateOne(
+                        {hotel_id:hotelID},
+                        {$set: req.body}
+                    );
+                    console.log(result,req.body);
+                    res.status(200).json({result,success: true});
+            }else{
+                res.status(501).json({message:"You are not authorized",success: false})
+            }
+        } catch (err) {
+            res.status(501).json({message:"Something went wrong",success: false})
+        }
+    }else{
+        res.status(501).json({message:"You are not authorized",success: false})
+    }
+}
+
 
 
 
@@ -73,5 +114,7 @@ module.exports ={
     addNewHotel,
     getAllHotels,
     getSingleHotels,
-    getOwnersHotels
+    getOwnersHotels,
+    deleteSingleHotel,
+    updateAHotel
 }
