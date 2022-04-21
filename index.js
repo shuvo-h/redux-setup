@@ -14,15 +14,15 @@ const port = process.env.PORT || 5000;
 app.use(express.json());
 
 // app.use(cors({ credentials:true,origin: `${process.env.FRONTEND_CLIENT_URI}` }));
-app.use(cors({ credentials:true,origin: `https://get-token-2fcdb.web.app` }));
-/*
+// app.use(cors({ credentials:true,origin: `${process.env.FRONTEND_CLIENT_URI_FIREBASE}` }));
+
 const corsOptions = {
-    origin: ["http://localhost:3000",`${process.env.FRONTEND_CLIENT_URI}`,`https://get-token-2fcdb.web.app`],
+    origin: ["http://localhost:3000",`${process.env.FRONTEND_CLIENT_URI}`,`${process.env.FRONTEND_CLIENT_URI_FIREBASE}`],
    //update: or "origin: true," if you don't wanna add a specific one
     credentials: true,
   };
   app.use(cors(corsOptions));
-*/
+
 
 
 app.use(cookieParser(`${process.env.COOKIE_SIGN_SECRET}`));
