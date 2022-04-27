@@ -648,6 +648,10 @@ app.get('/', (req, res) => {
   res.send('SportClub.com')
 })
 
+app.get('/test', (req, res) => {
+  res.send('SportClub.com test API')
+})
+
 app.listen(port, () => {
   console.log(`listening at http://localhost:${port}`)
 })
@@ -670,22 +674,6 @@ const resultSchema = {
   "given_quizes_id": []
 }
 */
-/*
-user id:
-question_count: 10 //max 10
-prev_question: "",
-prev_ans: "",
-quize_release_time: Date.now();
-answer_receive_time: Date.now();
-time_consumed: ((answer_receive_time - quize_release_time)/1000).toFixed(4),
-remaining_time: "",
-total_time: "60",
-reamining_time: 0,
-valid_point: "",
 
-wrong_answer: -2 point
-no answer: -1
-right answer: 5
-*/
 
 
