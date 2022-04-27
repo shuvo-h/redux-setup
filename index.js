@@ -641,11 +641,12 @@ async function runerw() {
       // payment stripe
       app.post('/create-payment-intent', async (req, res) => {
         const paymentInfo = req.body;
-        const amount = paymentInfo.price * 100;
+        const amount = parseInt(paymentInfo.price) * 100;
         const paymentIntent = await stripe.paymentIntents.create({
-            currency: 'usd',
+            currency: 'USD',
             amount: amount,
             payment_method_types: ['card']
+            
         });
         res.json({ clientSecret: paymentIntent.client_secret })
     })
