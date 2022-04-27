@@ -404,6 +404,13 @@ async function runerw() {
     })
 
 
+    app.get('/featuresProducts', async (req, res) => {
+      const cursor = featuresProductsCollection.find({});
+      const featuresInfo = await cursor.toArray();
+      res.send(featuresInfo);
+
+    })
+
 
 
 
