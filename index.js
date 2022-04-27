@@ -66,11 +66,13 @@ async function runerw() {
     const registerEventCollection = database.collection('eventRegister');
     const upcomingEventsCollection = database.collection('upcomingEvents');
 
-    const featuresProductsCollection = database.collection('featuresProducts');
     
     const contParticipantCollection = database.collection('contestParticipant');
     const contQuizeCollection = database.collection('contestQuizes');
     const contResultCollection = database.collection('contestResult');
+    
+    const featuresProductsCollection = database.collection('featuresProducts');
+    const ordersInfoCollection = database.collection('ordersInfo');
 
 
     app.get('/upcomingEvents', async (req, res) => {
@@ -610,6 +612,17 @@ async function runerw() {
       res.json({par_id:userInfo.par_id,email:userInfo.email})
     })
 
+
+    app.post('/ordersInfo', async(req, res) =>{
+      const ordersInfo = await ordersInfoCollection.insertOne(req.body);
+      res.json(ordersInfo);
+      });
+
+      app.get('/ordersInfo', async (req, res) => {
+        const cursor = ordersInfoCollection.find({});
+        const ordersInfo = await cursor.toArray();
+        res.json(ordersInfo);
+      })
 
 
     // end of mongodb connection 
