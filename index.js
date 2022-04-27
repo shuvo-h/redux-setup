@@ -15,10 +15,7 @@ const port = process.env.PORT || 7000;
 
 //Middleware Work,
 
-// app.use(cors({
-//   origin: ["http://localhost:3000",""]
-// }));
-
+// app.use(cors());
 app.use(
   cors({
     allowedHeaders: ["authorization", "Content-Type"], 
@@ -30,6 +27,7 @@ app.use(
     preflightContinue: false
   }) 
 )
+
 
 app.use(express.json());
 
@@ -640,6 +638,19 @@ async function runerw() {
       })
 
 
+      // payment stripe
+      app.post('/create-payment-intent', async (req, res) => {
+        const paymentInfo = req.body;
+        const amount = paymentInfo.price * 100;
+        const paymentIntent = await stripe.paymentIntents.create({
+            currency: 'usd',
+            amount: amount,
+            payment_method_types: ['card']
+        });
+        res.json({ clientSecret: paymentIntent.client_secret })
+    })
+
+
     // end of mongodb connection 
 
   }
@@ -689,6 +700,22 @@ const resultSchema = {
   "given_quizes_id": []
 }
 */
+/*
+user id:
+question_count: 10 //max 10
+prev_question: "",
+prev_ans: "",
+quize_release_time: Date.now();
+answer_receive_time: Date.now();
+time_consumed: ((answer_receive_time - quize_release_time)/1000).toFixed(4),
+remaining_time: "",
+total_time: "60",
+reamining_time: 0,
+valid_point: "",
 
+wrong_answer: -2 point
+no answer: -1
+right answer: 5
+*/
 
 
