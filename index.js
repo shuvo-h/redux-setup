@@ -638,7 +638,7 @@ async function runerw() {
         res.json(ordersInfo);
       })
 
-
+      /*
       // payment stripe
       app.post('/create-payment-intent', async (req, res) => {
         const paymentInfo = req.body;
@@ -651,7 +651,7 @@ async function runerw() {
         });
         res.json({ clientSecret: paymentIntent.client_secret })
     })
-
+    */
 
     // end of mongodb connection 
 
