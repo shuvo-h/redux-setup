@@ -1,5 +1,5 @@
 // Basic Working,
-
+const nodemailer = require("nodemailer");
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
@@ -13,10 +13,30 @@ const ObjectId = require("mongodb").ObjectId;
 const port = process.env.PORT || 7000;
 
 
-//Middleware Work,
+// Middleware Work,
 
-// app.use(cors());
-app.use(cors({origin:"*"}))
+app.use(
+  cors({
+    allowedHeaders: ["authorization", "Content-Type"], 
+   // you can change the headers
+    exposedHeaders: ["authorization"], 
+    //you can change the headers
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    preflightContinue: false
+  }) 
+)
+
+
+
+// app.use(
+//   cors()
+// );
+
+
+
+
+app.use(cors());
 // app.use(
 //   cors({
 //     allowedHeaders: ["authorization", "Content-Type"], 
@@ -79,14 +99,40 @@ async function runerw() {
     const bookingTicketCollection = database.collection('booking');
     const registerEventCollection = database.collection('eventRegister');
     const upcomingEventsCollection = database.collection('upcomingEvents');
+    const ordersInfoCollection = database.collection('ordersInfo');
 
-    
+
     const contParticipantCollection = database.collection('contestParticipant');
     const contQuizeCollection = database.collection('contestQuizes');
     const contResultCollection = database.collection('contestResult');
-    
-    const featuresProductsCollection = database.collection('featuresProducts');
-    const ordersInfoCollection = database.collection('ordersInfo');
+
+
+
+
+
+
+    app.post('/ordersInfo', async(req, res) =>{
+      const ordersInfo = await ordersInfoCollection.insertOne(req.body);
+      res.json(ordersInfo);
+      });
+
+
+
+  
+
+
+
+
+      app.get('/ordersInfo', async (req, res) => {
+        const cursor = ordersInfoCollection.find({});
+        const ordersInfo = await cursor.toArray();
+        res.send(ordersInfo);
+  
+      })
+
+
+  
+      
 
 
     app.get('/upcomingEvents', async (req, res) => {
@@ -617,13 +663,43 @@ async function runerw() {
       }
     })
 
-    // new added
-    // get single user par_id participant info by email 
+    
+    // get single contest user par_id participant info by email 
     app.get("/contest/id/:userEmail",async(req,res)=>{
       const {userEmail} = req.params;
       const userInfo = await contParticipantCollection.findOne({email:userEmail});
       console.log(userInfo,userEmail);
-      res.json({par_id:userInfo.par_id,email:userInfo.email})
+      res.json({par_id:userInfo?.par_id,email:userInfo?.email})
+    })
+
+
+    // send player's email
+    app.post("/player/sendEmail",async(req,res)=>{
+      // let testAccount = await nodemailer.createTestAccount();
+
+      // create reusable transporter object using the default SMTP transport
+      let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        // host: "smtp.ethereal.email",
+        // port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+          user: `${process.env.NODE_MAILER_USER}`, // generated ethereal user
+          pass: `${process.env.NODE_MAILER_PASS}`, // generated ethereal password
+        },
+      });
+
+       // send mail with defined transport object
+        let info = await transporter.sendMail({
+          from: `"Fred Foo 👻" <${process.env.NODE_MAILER_USER}>`, // sender address
+          to: `${req.body.email}`, // list of receivers
+          subject: "Communicate With Player", // Subject line
+          text: `${req.body.message}`, // plain text body
+          // html: `<p>${req.body.message}</p>`, // html body
+        });
+
+        res.json(info)
+
     })
 
 
@@ -638,20 +714,19 @@ async function runerw() {
         res.json(ordersInfo);
       })
 
-      /*
+
       // payment stripe
       app.post('/create-payment-intent', async (req, res) => {
         const paymentInfo = req.body;
-        const amount = parseInt(paymentInfo.price) * 100;
+        const amount = paymentInfo.price * 100;
         const paymentIntent = await stripe.paymentIntents.create({
-            currency: 'USD',
+            currency: 'usd',
             amount: amount,
             payment_method_types: ['card']
-            
         });
         res.json({ clientSecret: paymentIntent.client_secret })
     })
-    */
+
 
     // end of mongodb connection 
 
