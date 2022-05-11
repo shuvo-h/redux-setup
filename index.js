@@ -1,7 +1,10 @@
 // Basic Working,
+
 const nodemailer = require("nodemailer");
+
 const express = require('express');
 const cors = require('cors');
+
 require('dotenv').config();
 const app = express();
 const { MongoClient } = require('mongodb');
@@ -15,23 +18,23 @@ const port = process.env.PORT || 7000;
 
 // Middleware Work,
 
-app.use(
-  cors({
-    allowedHeaders: ["authorization", "Content-Type"], 
-   // you can change the headers
-    exposedHeaders: ["authorization"], 
-    //you can change the headers
-    origin: "*",
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    preflightContinue: false
-  }) 
-)
-
-
-
 // app.use(
-//   cors()
-// );
+//   cors({
+//     allowedHeaders: ["authorization", "Content-Type"], 
+//    // you can change the headers
+//     exposedHeaders: ["authorization"], 
+//     //you can change the headers
+//     origin: "*",
+//     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+//     preflightContinue: false
+//   }) 
+// )
+
+
+
+app.use(
+  cors()
+);
 
 
 
@@ -99,14 +102,22 @@ async function runerw() {
     const bookingTicketCollection = database.collection('booking');
     const registerEventCollection = database.collection('eventRegister');
     const upcomingEventsCollection = database.collection('upcomingEvents');
+
     const ordersInfoCollection = database.collection('ordersInfo');
 
 
     const contParticipantCollection = database.collection('contestParticipant');
     const contQuizeCollection = database.collection('contestQuizes');
     const contResultCollection = database.collection('contestResult');
+    const featuresProductsCollection = database.collection('featuresProducts');
 
 
+    app.get('/featuresProducts', async (req, res) => {
+      const cursor = featuresProductsCollection.find({});
+      const featuresInfo = await cursor.toArray();
+      res.send(featuresInfo);
+
+    })
 
 
 
