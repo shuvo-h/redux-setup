@@ -335,6 +335,12 @@ async function runerw() {
       res.json(result)
     })
 
+    app.get('/users', async (req, res) => {
+      const result = userCollection.find({});
+      const allUsers = await result.toArray();
+      res.json(allUsers)
+    })
+
 
 
 
