@@ -35,13 +35,6 @@ const port = process.env.PORT || 7000;
 
 
 
-app.use(
-  cors()
-);
-
-
-
-
 app.use(cors());
 // app.use(
 //   cors({
@@ -61,7 +54,7 @@ app.use(express.json());
 const http = createServer(app);
 const io = new Server(http, {
   cors:{
-    origin: ["http://localhost:3000"]
+    origin: ["http://localhost:3000","https://sports-club-70293.web.app"]
   }
 })
 
@@ -106,7 +99,7 @@ io.on('connection', function(socket) {
     console.log(data);
     const reqQuestion = questionList.filter(item => data.message === item.question);
     const userID = soketList.filter(id => id === socket.id);
-    const genericReplay = {question: data.message,Ans:"Please send a mail to us from contact us page for inquire more.",contact_link:"http://localhost:3000/contact"}
+    const genericReplay = {question: data.message,Ans:"Please send a mail to us from contact us page for inquire more.",contact_link:"https://sports-club-70293.web.app/contact"}
     const replay = reqQuestion[0] ? reqQuestion[0] : genericReplay;    
     io.to(userID).emit("getMessage",{user_id:userID[0],ans: replay})
   })
