@@ -10,6 +10,9 @@ const app = express();
 const { MongoClient } = require('mongodb');
 const { getUniqueID, getRandomNumber } = require('./utilities');
 
+const {createServer} = require("http");
+const { Server, socket } = require('socket.io');
+
 const ObjectId = require("mongodb").ObjectId;
 
 
@@ -55,6 +58,13 @@ app.use(cors());
 
 app.use(express.json());
 
+const http = createServer(app);
+const io = new Server(http, {
+  cors:{
+    origin: ["http://localhost:3000"]
+  }
+})
+
 
 
 
@@ -69,17 +79,53 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 // creating a client in MongoClient,
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-
-
-
-
-
 console.log(uri);
+
+
+// Socket implementation 
+const soketList = [];
+const questionList = [
+  {question:"Hello, How are you?",Ans:"I am fine"},
+  {question:"Where are you from?",Ans:"I am from dhaka"},
+  {question:"Hello",Ans:"How Can I Help You?"},
+  {question:"Hi",Ans:"How Can I Help You?"},
+  {question:"I need some Prodect",Ans:"Ok, What Type..?"},
+  {question:"How much",Ans:"it's 100$"},
+  {question:"any new contest here",Ans:"Sorry sir it's not available right time"},
+  {question:"Thank You",Ans:"You are must Wellcame"},
+  {question:"Thanks",Ans:"Wellcame"}
+]
+
+//Whenever someone connects this gets executed
+io.on('connection', function(socket) {
+  soketList.push(socket.id);
+  
+  // send message to user 
+  socket.on("chatMessage",(data)=>{
+   
+    console.log(data);
+    const reqQuestion = questionList.filter(item => data.message === item.question);
+    const userID = soketList.filter(id => id === socket.id);
+    const genericReplay = {question: data.message,Ans:"Please send a mail to us from contact us page for inquire more.",contact_link:"http://localhost:3000/contact"}
+    const replay = reqQuestion[0] ? reqQuestion[0] : genericReplay;    
+    io.to(userID).emit("getMessage",{user_id:userID[0],ans: replay})
+  })
+
+
+  //Whenever someone disconnects this piece of code executed
+  socket.on('disconnect', function () {
+     console.log('A user disconnected ', socket.id);
+     const rmIdx = soketList.indexOf(socket.id);
+     soketList.splice(rmIdx,1);
+  });
+});
+
+
+
 
 
 // Work on Async Function used in data,
 async function runerw() {
-
 
   // try Mothed,
 
@@ -772,44 +818,12 @@ app.get('/test', (req, res) => {
   res.send('SportClub.com test API')
 })
 
-app.listen(port, () => {
+http.listen(port, () => {
   console.log(`listening at http://localhost:${port}`)
 })
 
-
-
-
-/*
-const resultSchema = {
-  "par_id": 45454,
-  "contest_status": "running"|"end",
-  "question_count": 0,
-  "contest_started": Date.now(),
-  "contest_ended": Date.now(),
-  "last_quize_release_time": Date.now(),
-  "last_answer_receive_time": Date.now(),
-  "time_consumed":"time_consumed + (last_answer_receive_time - last_quize_release_time)",
-  "remaining_time": "(question_count * 1 * 60 * 1000) - (time_consumed + last_answer_receive_time - last_quize_release_time)"
-  "valid_Score":"",
-  "given_quizes_id": []
-}
-*/
-/*
-user id:
-question_count: 10 //max 10
-prev_question: "",
-prev_ans: "",
-quize_release_time: Date.now();
-answer_receive_time: Date.now();
-time_consumed: ((answer_receive_time - quize_release_time)/1000).toFixed(4),
-remaining_time: "",
-total_time: "60",
-reamining_time: 0,
-valid_point: "",
-
-wrong_answer: -2 point
-no answer: -1
-right answer: 5
-*/
+// app.listen(port, () => {
+//   console.log(`listening at http://localhost:${port}`)
+// })
 
 
