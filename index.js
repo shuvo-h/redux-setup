@@ -77,6 +77,7 @@ console.log(uri);
 
 // Socket implementation 
 const soketList = [];
+const adminList = [];
 const questionList = [
   {question:"Hello, How are you?",Ans:"I am fine"},
   {question:"Where are you from?",Ans:"I am from dhaka"},
@@ -91,17 +92,44 @@ const questionList = [
 
 //Whenever someone connects this gets executed
 io.on('connection', function(socket) {
-  soketList.push(socket.id);
   
   // send message to user 
   socket.on("chatMessage",(data)=>{
-   
-    console.log(data);
-    const reqQuestion = questionList.filter(item => data.message === item.question);
+    const userIDExist = soketList.filter(id => id === socket.id);
+    // console.log(userIDExist,"userIDExist");
+    if (!userIDExist.length && !data.admin) {
+      soketList.push(socket.id);
+      // console.log(userIDExist,"userIDExist userIDExist");
+    }
+    if (data.admin && !data.message) {
+      const isExit = adminList.filter(item=>item.email === data.admin_email);
+      if (isExit.length === 0) {
+        adminList.push({socketID:socket.id,email:data.admin_email})
+      }
+    }
+
+    // console.log(soketList,"soketList",adminList,"adminList-----------------");
     const userID = soketList.filter(id => id === socket.id);
-    const genericReplay = {question: data.message,Ans:"Please send a mail to us from contact us page for inquire more.",contact_link:"https://sports-club-70293.web.app/contact"}
-    const replay = reqQuestion[0] ? reqQuestion[0] : genericReplay;    
-    io.to(userID).emit("getMessage",{user_id:userID[0],ans: replay})
+    console.log(soketList,"soketList");
+    if (userID.length) {
+      io.to(adminList[0]?.socketID).emit("getMessage",{user_id:userID[0],question: data.message});
+    }else{
+      const adminUser = adminList.filter(item => item.socketID === socket.id);
+      console.log(adminUser,"adminUser");
+      if (adminUser) {
+        const userID = soketList.filter(id => id === data.user_id);
+        io.to(data.user_id).emit("getMessage",{user_id:userID[0],ans: data.message});
+      }
+
+    }
+
+    
+    console.log(data);
+    // const reqQuestion = questionList.filter(item => data.message === item.question);
+    // const userID = soketList.filter(id => id === socket.id);
+    // const genericReplay = {question: data.message,Ans:"Please send a mail to us from contact us page for inquire more.",contact_link:"https://sports-club-70293.web.app/contact"}
+    // const replay = reqQuestion[0] ? reqQuestion[0] : genericReplay;    
+    // io.to(userID).emit("getMessage",{user_id:userID[0],ans: replay})
   })
 
 
@@ -109,7 +137,10 @@ io.on('connection', function(socket) {
   socket.on('disconnect', function () {
      console.log('A user disconnected ', socket.id);
      const rmIdx = soketList.indexOf(socket.id);
-     soketList.splice(rmIdx,1);
+     rmIdx && soketList.splice(rmIdx,1);
+     const admInx = adminList.map(item => item.socketID).indexOf(socket.id);
+     console.log(adminList,"adminList");
+     admInx && adminList.splice(admInx,1);
   });
 });
 
