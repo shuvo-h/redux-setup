@@ -1,8 +1,30 @@
-# Getting Started with Create React App
+# Tech Learn [Shuvo Haldar](https://www.shuvohaldar.com/)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This repository is to store notes during learning new technologies [www.learn.shuvohaldar.com](https://www.shuvohaldar.com/)
 
-## Available Scripts
+### List of technologies
+- &#x2714; React.js
+    - &#x25CF; Hooks
+    - &#x25CF; Context API
+- &#x2714; Next.js
+    - &#x25CF; Server side rendering
+    - &#x25CF; Reusable components
+- &#x2714; Vue.js
+    - &#x25CF; Data binding
+    - &#x25CF; Reusability
+- &#x2714; Node.js
+    - &#x25CF; Express.js
+    - &#x25CF; Socket.IO
+- &#x2714; API
+    - &#x25CF; Rest full API
+    - &#x25CF; GrapgQL API (with Apollo Express)
+- &#x2714; Database
+    - &#x25CF; MongoDB
+- &#x2714; State Management
+    - &#x25CF; Redux, Redux-toolkit
+    - &#x25CF; Vuex
+
+@octocat :+1: This journey has started - it's ready to deep dive! :shipit:
 
 In the project directory, you can run:
 
